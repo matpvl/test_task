@@ -44,7 +44,13 @@ def radon_mi(c):
     c.run("radon mi .", pty=True)
 
 
-@task(pre=[black, ruff_format, mypy, ruff, radon_cc, radon_mi])
+@task
+def tests(c):
+    """Run tests."""
+    c.run(f"pytest ./src/tests")
+
+
+@task(pre=[black, ruff_format, mypy, ruff, radon_cc, radon_mi, tests])
 def build_local(c):
     """Run all tasks: mypy, black, and radon."""
     print("All checks completed.")

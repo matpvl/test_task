@@ -19,7 +19,8 @@ def test_filters_valid() -> None:
     """Test valid Filters DTO."""
     filters = Filters(
         date_range=DateRange(
-            start_date=Some.VALID_START_DATE, end_date=Some.VALID_END_DATE
+            start_date="2023-01-01",  # type: ignore[arg-type]
+            end_date=Some.VALID_END_DATE,
         ),
         category=["Electronics", "Clothing"],
         product_ids=[1001, 1002],
@@ -31,7 +32,7 @@ def test_filters_valid() -> None:
     assert filters.date_range.start_date is not None
     assert filters.category is not None
     assert filters.product_ids is not None
-    assert filters.date_range.start_date == "2023-01-01"
+    assert filters.date_range.start_date == Some.VALID_START_DATE
     assert "Electronics" in filters.category
     assert expected_product_value in filters.product_ids
 
@@ -60,7 +61,7 @@ def test_summary_request_valid() -> None:
     assert request.filters.date_range is not None
     assert request.filters.date_range.start_date is not None
     assert request.columns == ["quantity_sold"]
-    assert request.filters.date_range.start_date == "2023-01-01"
+    assert request.filters.date_range.start_date == Some.VALID_START_DATE
 
 
 def test_summary_request_defaults() -> None:
