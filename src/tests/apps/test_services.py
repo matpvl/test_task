@@ -62,3 +62,23 @@ def test_load_data_empty_file(
     # Assert the function raises ValueError
     with pytest.raises(ValueError, match="Sales data file is empty"):
         load_data()
+
+
+def test_load_data_invalid_csv(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Test behavior when the sales data file is invalid."""
+
+    invalid_content = """invalid content, not a CSV"""
+    file_path = tmp_path / "sales_data.csv"
+    file_path.write_text(invalid_content)
+
+    # Monkeypatch settings to point to the mock file
+    monkeypatch.setattr(settings, "sales_data", file_path)
+
+    # Assert the function raises ValueError
+    with pytest.raises(
+        ValueError,
+        match="Sales data file does not contain the required columns",
+    ):
+        load_data()

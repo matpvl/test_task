@@ -9,7 +9,7 @@ def load_data() -> pd.DataFrame:
     """Load sales data from CSV file."""
 
     try:
-        return pd.read_csv(settings.sales_data)
+        data = pd.read_csv(settings.sales_data)
 
     except FileNotFoundError as err:
         raise FileNotFoundError(
@@ -20,6 +20,20 @@ def load_data() -> pd.DataFrame:
         message = "Sales data file is empty"
         raise ValueError(message) from err
 
-    except pd.errors.ParserError as err:
-        message = f"Error parsing sales data file: {err}"
-        raise ValueError(message) from err
+    _validate_correct_columns(data)
+    return data
+
+
+def _validate_correct_columns(data: pd.DataFrame) -> None:
+    """Validate that the sales DataFrame contains the required columns."""
+
+    expected_columns = {
+        "date",
+        "product_id",
+        "category",
+        "quantity_sold",
+        "price_per_unit",
+    }
+    if not expected_columns.issubset(data.columns):
+        error_data = "Sales data file does not contain the required columns"
+        raise ValueError(error_data)
