@@ -11,8 +11,8 @@ def test_date_range_converts_string() -> None:
     """Test date range returns a date."""
 
     date_range = DateRange(start_date="2023-01-01", end_date="2023-01-31")  # type: ignore[arg-type]
-    assert date_range.start_date == Some.VALID_START_DATE
-    assert date_range.end_date == Some.VALID_END_DATE
+    assert date_range.start_date == Some.START_DATE
+    assert date_range.end_date == Some.END_DATE
 
 
 def test_filters_valid() -> None:
@@ -20,7 +20,7 @@ def test_filters_valid() -> None:
     filters = Filters(
         date_range=DateRange(
             start_date="2023-01-01",  # type: ignore[arg-type]
-            end_date=Some.VALID_END_DATE,
+            end_date=Some.END_DATE,
         ),
         category=["Electronics", "Clothing"],
         product_ids=[1001, 1002],
@@ -32,7 +32,7 @@ def test_filters_valid() -> None:
     assert filters.date_range.start_date is not None
     assert filters.category is not None
     assert filters.product_ids is not None
-    assert filters.date_range.start_date == Some.VALID_START_DATE
+    assert filters.date_range.start_date == Some.START_DATE
     assert "Electronics" in filters.category
     assert expected_product_value in filters.product_ids
 
@@ -51,7 +51,7 @@ def test_summary_request_valid() -> None:
         columns=["quantity_sold"],
         filters=Filters(
             date_range=DateRange(
-                start_date=Some.VALID_START_DATE, end_date=Some.VALID_END_DATE
+                start_date=Some.START_DATE, end_date=Some.END_DATE
             ),
             category=["Electronics"],
             product_ids=[1001],
@@ -61,7 +61,7 @@ def test_summary_request_valid() -> None:
     assert request.filters.date_range is not None
     assert request.filters.date_range.start_date is not None
     assert request.columns == ["quantity_sold"]
-    assert request.filters.date_range.start_date == Some.VALID_START_DATE
+    assert request.filters.date_range.start_date == Some.START_DATE
 
 
 def test_summary_request_defaults() -> None:

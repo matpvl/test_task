@@ -1,8 +1,11 @@
 """File containing business logic for sales app."""
 
+from typing import Optional
+
 import pandas as pd
 
 from src.apps.sales.const import EXPECTED_COLUMNS
+from src.apps.sales.dto import Filters
 from src.core.settings import settings
 
 
@@ -22,6 +25,33 @@ def load_data() -> pd.DataFrame:
         raise ValueError(message) from err
 
     _validate_correct_columns(data)
+    return data
+
+
+def filter_data(data: pd.DataFrame, filters: Optional[Filters]) -> pd.DataFrame:
+    """Apply filters to the sales data using a dynamic mapping approach."""
+
+    if not filters:
+        return data
+
+    filter_map = {
+        "date_range": lambda data_frame, value: data_frame[
+            (data_frame["date"] >= value.start_date.isoformat())
+            & (data_frame["date"] <= value.end_date.isoformat())
+        ],
+        "category": lambda data_frame, value: data_frame[
+            data_frame["category"].isin(value)
+        ],
+        "product_ids": lambda data_frame, value: data_frame[
+            data_frame["product_id"].isin(value)
+        ],
+    }
+
+    for filter_field, apply_filter in filter_map.items():
+        filter_value = getattr(filters, filter_field, None)
+        if filter_value:
+            data = apply_filter(data, filter_value)
+
     return data
 
 
