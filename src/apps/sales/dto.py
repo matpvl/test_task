@@ -14,6 +14,7 @@ class DateRange(BaseDTO):
     end_date: date
     """ISO format (YYYY-MM-DD)"""
 
+    # TODO Matija: validator for end_date > start_date
 
 class Filters(BaseDTO):
     """DTO for filtering sales data."""
