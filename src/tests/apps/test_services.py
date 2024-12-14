@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 
 from src.apps.sales.dto import Filters, DateRange
-from src.apps.sales.services import load_data, filter_data
+from src.apps.sales.services import load_data, filter_data, compute_statistics
 from src.core.settings import settings
 from src.tests.const import Some
 
@@ -199,3 +199,85 @@ def test_filter_data_empty_dataframe() -> None:
     )
     filtered_data = filter_data(empty_data, filters)
     assert filtered_data.empty
+
+
+def test_compute_statistics_valid(mock_data: pd.DataFrame) -> None:
+    """Test compute_statistics with valid numerical columns."""
+    columns = ["quantity_sold", "price_per_unit"]
+    result = compute_statistics(mock_data, columns)
+
+    quantity_mean = 25
+    quantity_median = 25
+    quantity_mode = 10
+    quantity_percentile_25 = 17.5
+    quantity_percentile_75 = 32.5
+
+    price_mean = 20
+    price_median = 20
+    price_mode = 5
+    price_percentile_25 = 12.5
+    price_percentile_75 = 27.5
+
+    # quantity_sold column
+    assert "quantity_sold" in result
+    assert result["quantity_sold"]["mean"] == quantity_mean
+    assert result["quantity_sold"]["median"] == quantity_median
+    assert result["quantity_sold"]["mode"] == quantity_mode
+    assert result["quantity_sold"]["std_dev"] is not None
+    assert result["quantity_sold"]["std_dev"] > 0
+    assert result["quantity_sold"]["percentile_25"] == quantity_percentile_25
+    assert result["quantity_sold"]["percentile_75"] == quantity_percentile_75
+
+    # price_per_unit column
+    assert "price_per_unit" in result
+    assert result["price_per_unit"]["mean"] == price_mean
+    assert result["price_per_unit"]["median"] == price_median
+    assert result["price_per_unit"]["mode"] == price_mode
+    assert result["price_per_unit"]["std_dev"] is not None
+    assert result["price_per_unit"]["std_dev"] > 0
+    assert result["price_per_unit"]["percentile_25"] == price_percentile_25
+    assert result["price_per_unit"]["percentile_75"] == price_percentile_75
+
+
+def test_compute_statistics_missing_columns(mock_data: pd.DataFrame) -> None:
+    """Test compute_statistics when columns are missing in the DataFrame."""
+    columns = ["non_existent_column", "quantity_sold"]
+    result = compute_statistics(mock_data, columns)
+
+    assert "quantity_sold" in result
+    assert "non_existent_column" not in result
+
+
+def test_compute_statistics_empty_dataframe() -> None:
+    """Test compute_statistics with an empty DataFrame."""
+    empty_data = pd.DataFrame(columns=["quantity_sold", "price_per_unit"])
+    columns = ["quantity_sold", "price_per_unit"]
+    result = compute_statistics(empty_data, columns)
+
+    assert result == {}
+
+
+def test_compute_statistics_nan_values() -> None:
+    """Test compute_statistics with NaN values in the column."""
+    data_with_nans = pd.DataFrame(
+        {
+            "quantity_sold": [10, 20, "Bilbo Baggins", None, 40],
+        }
+    )
+    columns = ["quantity_sold"]
+
+    # Define expected results as lowercase constants
+    expected_mean = 23.333333333333332
+    expected_median = 20
+    expected_mode = 10
+    expected_percentile_25 = 15
+    expected_percentile_75 = 30
+
+    result = compute_statistics(data_with_nans, columns)
+
+    assert "quantity_sold" in result
+    assert result["quantity_sold"]["mean"] == expected_mean
+    assert result["quantity_sold"]["median"] == expected_median
+    assert result["quantity_sold"]["mode"] == expected_mode
+    assert result["quantity_sold"]["percentile_25"] == expected_percentile_25
+    assert result["quantity_sold"]["percentile_75"] == expected_percentile_75

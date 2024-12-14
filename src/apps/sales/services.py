@@ -1,6 +1,6 @@
 """File containing business logic for sales app."""
 
-from typing import Optional
+from typing import Optional, Union
 
 import pandas as pd
 
@@ -53,6 +53,34 @@ def filter_data(data: pd.DataFrame, filters: Optional[Filters]) -> pd.DataFrame:
             data = apply_filter(data, filter_value)
 
     return data
+
+
+def compute_statistics(
+    data: pd.DataFrame, columns: list[str]
+) -> dict[str, dict[str, Union[float, None]]]:
+    """Compute summary statistics for the specified columns in the data."""
+
+    statistics = {}
+
+    for column in columns:
+        # skip columns not present in the DataFrame
+        if column not in data.columns:
+            continue
+
+        # drop NaN values to avoid errors and crashes, coerce non-numeric to NaN
+        column_data = pd.to_numeric(data[column], errors="coerce").dropna()
+
+        if not column_data.empty:
+            statistics[column] = {
+                "mean": column_data.mean(),
+                "median": column_data.median(),
+                "mode": column_data.mode()[0],
+                "std_dev": column_data.std(),
+                "percentile_25": column_data.quantile(0.25),
+                "percentile_75": column_data.quantile(0.75),
+            }
+
+    return statistics
 
 
 def _validate_correct_columns(data: pd.DataFrame) -> None:
