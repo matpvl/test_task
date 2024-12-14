@@ -2,6 +2,7 @@
 
 import pandas as pd
 
+from src.apps.sales.const import EXPECTED_COLUMNS
 from src.core.settings import settings
 
 
@@ -27,13 +28,7 @@ def load_data() -> pd.DataFrame:
 def _validate_correct_columns(data: pd.DataFrame) -> None:
     """Validate that the sales DataFrame contains the required columns."""
 
-    expected_columns = {
-        "date",
-        "product_id",
-        "category",
-        "quantity_sold",
-        "price_per_unit",
-    }
+    expected_columns = EXPECTED_COLUMNS
     if not expected_columns.issubset(data.columns):
         error_data = "Sales data file does not contain the required columns"
         raise ValueError(error_data)
