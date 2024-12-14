@@ -56,9 +56,7 @@ def test_summary_request_valid() -> None:
     request = SummaryRequest(
         columns=["quantity_sold"],
         filters=Filters(
-            date_range=DateRange(
-                start_date=Some.START_DATE, end_date=Some.END_DATE
-            ),
+            date_range=DateRange(start_date=Some.START_DATE, end_date=Some.END_DATE),
             category=["Electronics"],
             product_ids=[1001],
         ),
@@ -142,12 +140,9 @@ def test_summary_response_valid() -> None:
     expected_price_per_unit_median = 40
 
     assert "quantity_sold" in response.root_model
+    assert response.root_model["quantity_sold"].mean == expected_quantity_sold_mean
     assert (
-        response.root_model["quantity_sold"].mean == expected_quantity_sold_mean
-    )
-    assert (
-        response.root_model["price_per_unit"].median
-        == expected_price_per_unit_median
+        response.root_model["price_per_unit"].median == expected_price_per_unit_median
     )
 
 
