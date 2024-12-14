@@ -30,3 +30,20 @@ class SummaryRequest(BaseDTO):
 
     columns: Optional[list[str]] = ["quantity_sold", "price_per_unit"]
     filters: Optional[Filters] = None
+
+
+class ColumnStatistics(BaseDTO):
+    """DTO for statistics of a single column."""
+
+    mean: Optional[float]
+    median: Optional[float]
+    mode: Optional[float]
+    std_dev: Optional[float]
+    percentile_25: Optional[float]
+    percentile_75: Optional[float]
+
+
+class SummaryResponse(BaseDTO):
+    """DTO for the summary response."""
+
+    root_model: dict[str, ColumnStatistics]
