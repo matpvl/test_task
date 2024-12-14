@@ -2,8 +2,8 @@
 
 from fastapi import FastAPI
 
-from src.core.routers import router
 from src.core.common_types import SingletonMeta
+from src.apps.sales.routers import router
 
 
 class ApplicationConfig(metaclass=SingletonMeta):
