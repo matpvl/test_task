@@ -9,7 +9,110 @@ readme = "README.md"
 python = "^3.11"
 fastapi = "^0.115.6"
 uvicorn = "^0.33.0"
+pytest = "^8.3.4"
+invoke = "^2.2.0"
+mypy = "^1.13.0"
+ruff = "^0.8.3"
+radon = "^6.0.1"
+flake8 = "^7.1.1"
 
+[tool.ruff]
+line-length = 80
+
+# which rulesets to use (some of them have been disabled for this project)
+lint.select = [
+    "F",    # pyflakes
+    "E",    # pycodestyle
+    "W",    # pycodestyle
+    "C90",  # mccabe
+    "N",    # pep8-naming
+    "D",    # pydocstyle
+    "UP",   # pyupgrade
+    "YTT",  # flake8-2020
+    "ANN",  # flake8-annotations
+    "S",    # flake8-bandit
+    "BLE",  # flake8-blind-except
+    "FBT",  # flake8-boolean-trap
+    "B",    # flake8-bugbear
+    "A",    # flake8-builtins
+    "COM",  # flake8-commas
+    "C4",   # flake8-comprehensions
+    "DTZ",  # flake8-datetimez
+    "T10",  # flake8-debugger
+    "DJ",   # flake8-django
+    "EM",   # flake8-errmsg
+    "EXE",  # flake8-executable
+    "ICN",  # flake8-import-conventions
+    "G",    # flake8-logging-format
+    "INP",  # flake8-no-pep420
+    "PIE",  # flake8-pie
+    "T20",  # flake8-print
+    "PYI",  # flake8-pyi
+    "PT",   # flake8-pytest-style
+    "Q",    # flake8-quotes
+    "RSE",  # flake8-raise
+    "RET",  # flake8-return
+    "SLF",  # flake8-self
+    "SIM",  # flake8-simplify
+    "TID",  # flake8-tidy-imports
+    #"TCH", # flake8-type-checking - disabled this because it doesn't really
+            # add any value, but it does a lot of nagging
+    "ARG",  # flake8-unused-arguments
+    "PTH",  # flake8-use-pathlib
+    "ERA",  # eradicate
+    "PGH",  # pygrep-hooks
+    "PL",   # pylint
+    "TRY",  # tryceratops
+    "FLY",  # flynt
+    "PERF", # Perflint
+    "FURB", # refurb
+    "LOG",  # flake8-logging
+    "PLC",  # pylint convention
+    "PLE",  # pylint error
+    "PLR",  # pylint refactor
+    "PLW",  # pylint warning
+    "RUF",  # ruff
+]
+
+# file patterns to completely exclude from ruff analysis
+# NOTE: please keep this list sorted alphabetically so it's easier to maintain
+exclude = [
+    "settings.py",
+    "asgi.py",
+    "manage.py",
+    "tasks.py",
+    "telemarketing/migrations/*"
+]
+
+# ruff rules to ignore
+# NOTE: please keep this list sorted alphabetically so it's easier to maintain
+# reference: https://beta.ruff.rs/docs/rules/
+lint.ignore = [
+    "ANN401",   # generic args and kwargs
+    "COM812",   # trailing-comma-missing
+    "D202",     # no-blank-line-after-function
+    "D203",     # one-blank-line-before-class
+    "D212",     # multi-line-summary-first-line
+    "D406",     # NewLineAfterSectionName
+    "D407",     # dashed-underline-after-section - this seems to complain about not using Google-style docstring
+    "D413",     # blank line after last section
+    "E203",     # whitespace-before-colon
+    "E501",     # LineTooLong
+    "EM102",    # f-string-in-exception
+    "EXE001",   # shebang-not-executable
+    "PLC1901",  # compare-to-empty-string
+    "PLR6301",  # no-self-use
+    "RET505",   # SuperfluousElseReturn
+    "RET506",   # SuperfluousElseRaisek
+    "RET507",   # SuperfluousElseContinue
+    "RET508",   # SuperfluousElseBreak
+    "TRY003",   # raise-vanilla-args
+    "UP007",    # typing-union
+    "UP035",    # import-replacement - disabled because it incorrectly complains about Callable
+    "W291",     # trailing-whitespace
+    "W293",     # blank-line-at-end-of-file
+    "RUF012",   # mutable calss attributes should be annotated with 'typing.ClassVar'
+]
 
 [build-system]
 requires = ["poetry-core"]
