@@ -16,3 +16,5 @@ class Some:
     DATE_RANGE = DateRange(start_date=START_DATE, end_date=END_DATE)
 
     CATEGORY = "Electronics"
+
+    INVALID_CATEGORY = "InvalidCategory"

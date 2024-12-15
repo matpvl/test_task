@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
+from pydantic_core._pydantic_core import ValidationError
 
-# Assume your main application file is named `main.py` and defines `app`
 from main import app
 from src.apps.sales.dto import SummaryRequest, Filters
 from src.core.settings import settings
@@ -137,3 +137,14 @@ def test_generate_sales_summary_custom_columns(client: TestClient) -> None:
         len(response_data["quantity_sold"])
         == expected_number_of_statistics_fields
     )
+
+
+def test_invalid_category_filter(client: TestClient) -> None:  # noqa: ARG001
+    """Test filtering with invalid category raises error."""
+
+    filters = Filters(category=[Some.INVALID_CATEGORY])  # type: ignore[call-arg]
+    with pytest.raises(
+        ValidationError,
+        match=r"Provided categories: \['InvalidCategory'\] are not valid",
+    ):
+        SummaryRequest(filters=filters).model_dump(mode="json")
