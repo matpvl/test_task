@@ -50,6 +50,8 @@ class Filters(BaseDTO):
         examples=[[123, 456, 789]],
     )
 
+    # TODO Matija: validator for category
+
 
 class SummaryRequest(BaseDTO):
     """DTO for the summary request."""
