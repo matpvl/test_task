@@ -174,7 +174,7 @@ def test_generate_sales_summary_with_filters_none(client: TestClient) -> None:
 
 
 def test_generate_sales_summary_with_invalid_date_range(client: TestClient) -> None:
-    """Test date filter returns bad request."""
+    """Test date filter returns unprocessable entity error."""
 
     json = {
         "columns": ["quantity_sold", "price_per_unit"],
