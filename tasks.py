@@ -50,6 +50,12 @@ def tests(c):
     c.run(f"pytest ./src/tests")
 
 
+@task(pre=[black, ruff_format, mypy, ruff, radon_cc, radon_mi])
+def lint(c):
+    """Run all linters for code verification: ruff, mypy, radon."""
+    print("All checks completed.")
+
+
 @task(pre=[black, ruff_format, mypy, ruff, radon_cc, radon_mi, tests])
 def build_local(c):
     """Run all tasks: mypy, black, and radon."""
