@@ -1,8 +1,8 @@
 """File containing business logic for sales app."""
 
-from typing import Optional, Union
-
 import pandas as pd
+
+from typing import Optional, Union
 
 from src.apps.sales.const import EXPECTED_COLUMNS
 from src.apps.sales.dto import Filters

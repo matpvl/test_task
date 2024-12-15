@@ -1,6 +1,6 @@
 """Tests for WebServices."""
 
-from http.client import OK
+from http.client import OK, NOT_FOUND
 from pathlib import Path
 
 import pytest
@@ -43,9 +43,8 @@ def test_generate_sales_summary_no_filters(client: TestClient) -> None:
 
     response_data = response.json()
     # We expect both columns to be present since default columns are used.
-    assert "summary" in response_data
-    assert "quantity_sold" in response_data["summary"]
-    assert "price_per_unit" in response_data["summary"]
+    assert "quantity_sold" in response_data
+    assert "price_per_unit" in response_data
 
     expected_quantity_mean = 25
     expected_quantity_median = 25
@@ -60,14 +59,14 @@ def test_generate_sales_summary_no_filters(client: TestClient) -> None:
     expected_price_percentile_75 = 27.5
 
     # Check that statistics have been computed correctly
-    quantity_stats = response_data["summary"]["quantity_sold"]
+    quantity_stats = response_data["quantity_sold"]
     assert quantity_stats["mean"] == expected_quantity_mean
     assert quantity_stats["median"] == expected_quantity_median
     assert quantity_stats["mode"] == expected_quantity_mode
     assert quantity_stats["percentile_25"] == expected_quantity_percentile_25
     assert quantity_stats["percentile_75"] == expected_quantity_percentile_75
 
-    price_stats = response_data["summary"]["price_per_unit"]
+    price_stats = response_data["price_per_unit"]
     assert price_stats["mean"] == expected_price_mean
     assert price_stats["median"] == expected_price_median
     assert price_stats["mode"] == expected_price_mode
@@ -88,14 +87,13 @@ def test_generate_sales_summary_with_date_filter(client: TestClient) -> None:
     expected_quantity_mean = 20
     expected_price_mean = 15
 
-    assert "summary" in response_data
-    assert "quantity_sold" in response_data["summary"]
-    assert "price_per_unit" in response_data["summary"]
+    assert "quantity_sold" in response_data
+    assert "price_per_unit" in response_data
 
-    quantity_stats = response_data["summary"]["quantity_sold"]
+    quantity_stats = response_data["quantity_sold"]
     assert quantity_stats["mean"] == expected_quantity_mean
 
-    price_stats = response_data["summary"]["price_per_unit"]
+    price_stats = response_data["price_per_unit"]
     assert price_stats["mean"] == expected_price_mean
 
 
@@ -114,10 +112,10 @@ def test_generate_sales_summary_with_category_filter(
     expected_quantity_median = 20
     expected_price_median = 15
 
-    quantity_stats = response_data["summary"]["quantity_sold"]
+    quantity_stats = response_data["quantity_sold"]
     assert quantity_stats["median"] == expected_quantity_median
 
-    price_stats = response_data["summary"]["price_per_unit"]
+    price_stats = response_data["price_per_unit"]
     assert price_stats["median"] == expected_price_median
 
 
@@ -128,11 +126,13 @@ def test_generate_sales_summary_no_matching_filters(client: TestClient) -> None:
     payload = SummaryRequest(filters=filters).model_dump()
     response = client.post("/summary", json=payload)
 
-    assert response.status_code == OK
+    assert response.status_code == NOT_FOUND
     response_data = response.json()
 
     # no matching rows, so no statistics
-    assert response_data == {"summary": {}}
+    assert response_data == {
+        "detail": "No statistics found for the given filters and columns."
+    }
 
 
 def test_generate_sales_summary_custom_columns(client: TestClient) -> None:
@@ -145,11 +145,11 @@ def test_generate_sales_summary_custom_columns(client: TestClient) -> None:
     response_data = response.json()
 
     # Only "quantity_sold" should be present
-    assert "quantity_sold" in response_data["summary"]
-    assert "price_per_unit" not in response_data["summary"]
+    assert "quantity_sold" in response_data
+    assert "price_per_unit" not in response_data
 
     expected_number_of_statistics_fields = 6
     assert (
-        len(response_data["summary"]["quantity_sold"])
+        len(response_data["quantity_sold"])
         == expected_number_of_statistics_fields
     )

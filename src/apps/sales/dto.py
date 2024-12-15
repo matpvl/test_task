@@ -44,15 +44,9 @@ class SummaryRequest(BaseDTO):
 class ColumnStatistics(BaseDTO):
     """DTO for statistics of a single column."""
 
-    mean: Optional[float]
-    median: Optional[float]
-    mode: Optional[float]
-    std_dev: Optional[float]
-    percentile_25: Optional[float]
-    percentile_75: Optional[float]
-
-
-class SalesSummaryResponse(BaseDTO):
-    """Response object containing summary."""
-
-    summary: dict[str, ColumnStatistics]
+    mean: float
+    median: float
+    mode: float
+    std_dev: float
+    percentile_25: float
+    percentile_75: float

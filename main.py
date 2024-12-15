@@ -1,6 +1,6 @@
 """Application instance."""
 
-from src.core.config import ApplicationConfig
+from src.core.asgi import ApplicationConfig
 
 app = ApplicationConfig().get_app()
 

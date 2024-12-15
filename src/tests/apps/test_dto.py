@@ -7,9 +7,7 @@ from src.apps.sales.dto import (
     DateRange,
     Filters,
     SummaryRequest,
-    # SummaryResponse,
     ColumnStatistics,
-    SalesSummaryResponse,
 )
 from src.tests.const import Some
 
@@ -115,39 +113,6 @@ def test_column_statistics_invalid_type() -> None:
 
     with pytest.raises(ValidationError):
         ColumnStatistics(mean="invalid")  # type: ignore[call-arg, arg-type]
-
-
-def test_summary_response_valid() -> None:
-    """Test valid SummaryResponse DTO."""
-
-    stats_data = {
-        "quantity_sold": ColumnStatistics(
-            mean=15.2,
-            median=10,
-            mode=8,
-            std_dev=5.6,
-            percentile_25=7,
-            percentile_75=20,
-        ),
-        "price_per_unit": ColumnStatistics(
-            mean=45.3,
-            median=40,
-            mode=39.99,
-            std_dev=12.1,
-            percentile_25=30,
-            percentile_75=55,
-        ),
-    }
-    response = SalesSummaryResponse(summary=stats_data)
-    expected_quantity_sold_mean = 15.2
-    expected_price_per_unit_median = 40
-
-    assert "quantity_sold" in response.summary
-    assert response.summary["quantity_sold"].mean == expected_quantity_sold_mean
-    assert (
-        response.summary["price_per_unit"].median
-        == expected_price_per_unit_median
-    )
 
 
 def test_date_range_invalid_order() -> None:

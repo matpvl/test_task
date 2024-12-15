@@ -1,22 +1,24 @@
 """Contains the routes and url for the sales app."""
 
-from fastapi import APIRouter, HTTPException
+import pandas as pd
 
-__all__ = ("router",)
+from typing import Optional, Annotated
+from fastapi import APIRouter, HTTPException, Depends
 
 from src.apps.sales.dto import (
     SummaryRequest,
     ColumnStatistics,
-    SalesSummaryResponse,
 )
 from src.apps.sales.services import load_data, filter_data, compute_statistics
 
+
+__all__ = ("router",)
 router = APIRouter()
 
 
 @router.post(
     "/summary",
-    response_model=SalesSummaryResponse,
+    response_model=dict[str, ColumnStatistics],
     summary="Generate sales summary",
     description=(
         "This endpoint generates a summary of sales data based on the provided filters and columns. "
@@ -26,28 +28,26 @@ router = APIRouter()
 )
 async def generate_sales_summary_router(
     summary_request: SummaryRequest,
-) -> SalesSummaryResponse:
+    sales_data: Annotated[pd.DataFrame, Depends(load_data)],
+) -> Optional[dict[str, ColumnStatistics]]:
     """Generate a summary of sales data based on the provided filters and columns."""
 
-    try:
-        data = load_data()
-    except FileNotFoundError as err:
-        raise HTTPException(status_code=404, detail=str(err)) from err
-    except ValueError as err:
-        raise HTTPException(status_code=422, detail=str(err)) from err
-
     # apply provided filters if any
-    filtered_data = filter_data(data, summary_request.filters)
+    filtered_data = filter_data(sales_data, summary_request.filters)
 
     # compute statistics for the specified columns
     statistics = compute_statistics(
         filtered_data, summary_request.columns or []
     )
 
-    # convert the statistics dict into ColumnStatistics DTOs
-    column_statistics = {
-        column: ColumnStatistics(**stats_dict)
-        for column, stats_dict in statistics.items()
-    }
-
-    return SalesSummaryResponse(summary=column_statistics)
+    if statistics:
+        # convert the statistics dict into ColumnStatistics DTOs
+        return {
+            column: ColumnStatistics(**stats_dict)  # type: ignore[arg-type]
+            for column, stats_dict in statistics.items()
+        }
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail="No statistics found for the given filters and columns.",
+        )

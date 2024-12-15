@@ -1,7 +1,7 @@
 """Tests for project basis."""
 
+from src.core.asgi import ApplicationConfig
 from src.core.common_types import SingletonMeta
-from src.core.config import ApplicationConfig
 
 
 def test_application_config() -> None:
