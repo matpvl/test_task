@@ -1,6 +1,7 @@
 """Tests for models (data transfer objects)."""
 
 import pytest
+import pandas as pd
 from pydantic import ValidationError
 
 from src.apps.sales.dto import (
@@ -12,6 +13,26 @@ from src.apps.sales.dto import (
 from src.tests.const import Some
 
 
+@pytest.fixture
+def mock_load_data(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Fixture to mock the load_data function."""
+
+    def _mock_load_data() -> pd.DataFrame:
+        # Return a DataFrame with the necessary columns and valid categories
+        return pd.DataFrame(
+            {
+                "category": ["Electronics", "Clothing"],
+                "date": ["2023-01-01", "2023-01-15"],
+                "product_id": [1001, 1002],
+                "quantity_sold": [10, 20],
+                "price_per_unit": [5.0, 15.0],
+            }
+        )
+
+    # Apply the monkeypatch to replace load_data with the mock
+    monkeypatch.setattr("src.apps.sales.data_utils.load_data", _mock_load_data)
+
+
 def test_date_range_converts_string() -> None:
     """Test date range returns a date."""
 
@@ -20,7 +41,7 @@ def test_date_range_converts_string() -> None:
     assert date_range.end_date == Some.END_DATE
 
 
-def test_filters_valid() -> None:
+def test_filters_valid(mock_load_data: pytest.MonkeyPatch) -> None:  # noqa:ARG001
     """Test valid Filters DTO."""
     filters = Filters(
         date_range=DateRange(
@@ -50,14 +71,14 @@ def test_filters_optional_fields() -> None:
     assert filters.product_ids is None
 
 
-def test_summary_request_valid() -> None:
+def test_summary_request_valid(
+    mock_load_data: pytest.MonkeyPatch,  # noqa:ARG001
+) -> None:
     """Test valid SummaryRequest DTO."""
     request = SummaryRequest(
         columns=["quantity_sold"],
         filters=Filters(
-            date_range=DateRange(
-                start_date=Some.START_DATE, end_date=Some.END_DATE
-            ),
+            date_range=DateRange(start_date=Some.START_DATE, end_date=Some.END_DATE),
             category=["Electronics"],
             product_ids=[1001],
         ),
