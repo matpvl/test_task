@@ -8,7 +8,7 @@ def test_application_config() -> None:
     """Test application config."""
     config = ApplicationConfig()
     app = config.get_app()
-    assert app.title == "Sales Compstack"
+    assert app.title == "Compstack Sales App"
     assert app.description == "Sales Compstack - API Documentation"
 
 

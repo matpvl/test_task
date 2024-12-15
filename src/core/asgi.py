@@ -16,7 +16,7 @@ class ApplicationConfig(metaclass=SingletonMeta):
         """Initialize the FastAPI application."""
 
         self._asgi_app = FastAPI(
-            title="Sales Compstack",
+            title="Compstak Sales App",
             description="Sales Compstack - API Documentation",
         )
         self._asgi_app.include_router(router)

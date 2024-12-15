@@ -1,15 +1,17 @@
 FROM python:3.11-slim
 
+# Set the working directory
 WORKDIR /app
 
-ENV POETRY_VERSION=1.6.1
-RUN pip install --no-cache-dir poetry=="${POETRY_VERSION}"
+# Install Poetry and dependencies
+COPY pyproject.toml poetry.lock ./
+RUN pip install poetry && poetry config virtualenvs.create false && poetry install --no-root
 
-COPY pyproject.toml poetry.lock /app/
-RUN poetry install --no-interaction --no-ansi --no-root
+# Copy the application code
+COPY . .
 
-COPY . /app
+# Expose the application port
+EXPOSE 8080
 
-EXPOSE 8000
-
-CMD ["poetry", "run", "uvicorn", "src.core.asgi:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
