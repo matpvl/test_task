@@ -56,7 +56,9 @@ def test_summary_request_valid() -> None:
     request = SummaryRequest(
         columns=["quantity_sold"],
         filters=Filters(
-            date_range=DateRange(start_date=Some.START_DATE, end_date=Some.END_DATE),
+            date_range=DateRange(
+                start_date=Some.START_DATE, end_date=Some.END_DATE
+            ),
             category=["Electronics"],
             product_ids=[1001],
         ),
@@ -140,9 +142,12 @@ def test_summary_response_valid() -> None:
     expected_price_per_unit_median = 40
 
     assert "quantity_sold" in response.root_model
-    assert response.root_model["quantity_sold"].mean == expected_quantity_sold_mean
     assert (
-        response.root_model["price_per_unit"].median == expected_price_per_unit_median
+        response.root_model["quantity_sold"].mean == expected_quantity_sold_mean
+    )
+    assert (
+        response.root_model["price_per_unit"].median
+        == expected_price_per_unit_median
     )
 
 
@@ -160,3 +165,17 @@ def test_summary_response_invalid_column_statistics() -> None:
         SummaryResponse(
             root_model={"quantity_sold": {"mean": "invalid"}}  # type: ignore[dict-item]
         )
+
+
+def test_date_range_invalid_order() -> None:
+    """Test DateRange with end_date earlier than start_date."""
+    with pytest.raises(
+        ValidationError, match="end_date must be greater than start_date."
+    ):
+        DateRange(start_date="2023-01-31", end_date="2023-01-01")  # type: ignore[arg-type]
+
+
+def test_date_range_missing_end_date() -> None:
+    """Test DateRange when end_date is missing."""
+    with pytest.raises(ValidationError, match=r"end_date\s+Field required"):
+        DateRange(start_date="2023-01-01")  # type: ignore[call-arg, arg-type]

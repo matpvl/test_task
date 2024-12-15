@@ -3,6 +3,8 @@
 from datetime import date
 from typing import Optional
 
+from pydantic import model_validator
+
 from src.core.common_types import BaseDTO
 
 
@@ -14,7 +16,14 @@ class DateRange(BaseDTO):
     end_date: date
     """ISO format (YYYY-MM-DD)"""
 
-    # TODO Matija: validator for end_date > start_date
+    @model_validator(mode="after")
+    def validate_date_range(self) -> "DateRange":
+        """Validate the given date range."""
+
+        if self.end_date < self.start_date:
+            error = "end_date must be greater than start_date."
+            raise ValueError(error)
+        return self
 
 
 class Filters(BaseDTO):
