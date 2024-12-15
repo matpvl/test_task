@@ -25,16 +25,17 @@ Install via pip: `pip install poetry`
 
 1. Insert the sales_data.csv file into the main root of the project.
 2. Run `poetry shell`.
-3. Run `invoke server`.
-4. Access `127.0.0.1:8080/docs` in the browser to view documentation.
-5. Running the local build (OPTIONAL), in order to test out changes locally before
+3. Run `poetry install` to install dependencies.
+4. Run `invoke server`.
+5. Access `127.0.0.1:8080/docs` in the browser to view documentation.
+6. Running the local build (OPTIONAL), in order to test out changes locally before
    pushing, always run `invoke build-local`.
 
-## Testing
+### Testing
 
 In order for testing to work you will need docker installed.
 https://docs.docker.com/desktop/
 
-1. Run `invoke buildup` to create an docker-compose environment.
+1. Run `docker compose up` to create an docker-compose environment.
 2. Access docs on `http://0.0.0.0:8080/docs`
 
