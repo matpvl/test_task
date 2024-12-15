@@ -1,7 +1,7 @@
 ## Sales App
 #### _a test assignment_
 
-This is a simple FastAPI project with a single endpoint, showcasing industry practices and SOLID design.
+This is a simple FastAPI project with a single endpoint, showcasing industry practices and SOLID test driven design.
 
 This readme contains instructions for *development* and *testing*.
 
