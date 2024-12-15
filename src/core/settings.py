@@ -11,7 +11,8 @@ class Settings(BaseSettings):
     sales_data: Path = root_dir / "sales_data.csv"
 
     class Config:
-        env_file = ".env"  # Optional: Load settings from a .env file
+        """Settings configuration."""
+        env_file = ".env"
         env_file_encoding = "utf-8"
 
 
