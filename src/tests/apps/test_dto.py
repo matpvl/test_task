@@ -55,7 +55,9 @@ def test_summary_request_valid() -> None:
     request = SummaryRequest(
         columns=["quantity_sold"],
         filters=Filters(
-            date_range=DateRange(start_date=Some.START_DATE, end_date=Some.END_DATE),
+            date_range=DateRange(
+                start_date=Some.START_DATE, end_date=Some.END_DATE
+            ),
             category=["Electronics"],
             product_ids=[1001],
         ),

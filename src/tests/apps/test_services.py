@@ -25,7 +25,9 @@ def mock_data() -> pd.DataFrame:
     )
 
 
-def test_load_data_valid(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+def test_load_data_valid(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     """Test loading a valid sales data file."""
 
     # we mock a valid CSV file
@@ -61,7 +63,9 @@ def test_load_data_file_not_found(monkeypatch: pytest.MonkeyPatch) -> None:
         load_data()
 
 
-def test_load_data_empty_file(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+def test_load_data_empty_file(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     """Test behavior when the sales data file is empty."""
 
     file_path = tmp_path / "sales_data.csv"
@@ -76,7 +80,9 @@ def test_load_data_empty_file(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -
         load_data()
 
 
-def test_load_data_invalid_csv(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+def test_load_data_invalid_csv(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     """Test behavior when the sales data file is invalid."""
 
     invalid_content = """invalid content, not a CSV"""
@@ -106,7 +112,9 @@ def test_filter_data_date_range(mock_data: pd.DataFrame) -> None:
     """Test filter_data with a date range filter."""
 
     filters = Filters(  # type: ignore[call-arg]
-        date_range=DateRange(start_date=Some.START_DATE, end_date=Some.END_DATE_2)
+        date_range=DateRange(
+            start_date=Some.START_DATE, end_date=Some.END_DATE_2
+        )
     )
     filtered_data = filter_data(mock_data, filters)
 
@@ -119,7 +127,9 @@ def test_filter_data_future_end_date(mock_data: pd.DataFrame) -> None:
     """Test filter_data with a future end date returns all dates smaller than it."""
 
     filters = Filters(  # type: ignore[call-arg]
-        date_range=DateRange(start_date=Some.START_DATE, end_date=Some.FUTURE_DATE)
+        date_range=DateRange(
+            start_date=Some.START_DATE, end_date=Some.FUTURE_DATE
+        )
     )
     filtered_data = filter_data(mock_data, filters)
 

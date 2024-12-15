@@ -149,4 +149,7 @@ def test_generate_sales_summary_custom_columns(client: TestClient) -> None:
     assert "price_per_unit" not in response_data
 
     expected_number_of_statistics_fields = 6
-    assert len(response_data["quantity_sold"]) == expected_number_of_statistics_fields
+    assert (
+        len(response_data["quantity_sold"])
+        == expected_number_of_statistics_fields
+    )

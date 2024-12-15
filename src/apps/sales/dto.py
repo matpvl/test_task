@@ -96,7 +96,9 @@ class ColumnStatistics(BaseDTO):
     """DTO for statistics of a single column."""
 
     mean: float = Field(..., description="Mean of the column", examples=[125.5])
-    median: float = Field(..., description="Median of the column", examples=[120.0])
+    median: float = Field(
+        ..., description="Median of the column", examples=[120.0]
+    )
     mode: float = Field(..., description="Mode of the column", examples=[115.0])
     std_dev: float = Field(
         ..., description="Standard deviation of the column", examples=[10.0]
