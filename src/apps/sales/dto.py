@@ -52,7 +52,7 @@ class ColumnStatistics(BaseDTO):
     percentile_75: Optional[float]
 
 
-class SummaryResponse(BaseDTO):
-    """DTO for the summary response."""
+class SalesSummaryResponse(BaseDTO):
+    """Response object containing summary."""
 
-    root_model: dict[str, ColumnStatistics]
+    summary: dict[str, ColumnStatistics]

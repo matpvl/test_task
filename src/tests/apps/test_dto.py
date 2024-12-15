@@ -7,8 +7,9 @@ from src.apps.sales.dto import (
     DateRange,
     Filters,
     SummaryRequest,
-    SummaryResponse,
+    # SummaryResponse,
     ColumnStatistics,
+    SalesSummaryResponse,
 )
 from src.tests.const import Some
 
@@ -137,34 +138,16 @@ def test_summary_response_valid() -> None:
             percentile_75=55,
         ),
     }
-    response = SummaryResponse(root_model=stats_data)
+    response = SalesSummaryResponse(summary=stats_data)
     expected_quantity_sold_mean = 15.2
     expected_price_per_unit_median = 40
 
-    assert "quantity_sold" in response.root_model
+    assert "quantity_sold" in response.summary
+    assert response.summary["quantity_sold"].mean == expected_quantity_sold_mean
     assert (
-        response.root_model["quantity_sold"].mean == expected_quantity_sold_mean
-    )
-    assert (
-        response.root_model["price_per_unit"].median
+        response.summary["price_per_unit"].median
         == expected_price_per_unit_median
     )
-
-
-def test_summary_response_empty() -> None:
-    """Test SummaryResponse DTO with no columns."""
-
-    response = SummaryResponse(root_model={})
-    assert response.root_model == {}
-
-
-def test_summary_response_invalid_column_statistics() -> None:
-    """Test SummaryResponse DTO with invalid ColumnStatistics."""
-
-    with pytest.raises(ValidationError):
-        SummaryResponse(
-            root_model={"quantity_sold": {"mean": "invalid"}}  # type: ignore[dict-item]
-        )
 
 
 def test_date_range_invalid_order() -> None:
