@@ -1,4 +1,5 @@
 """Contains the routes and url for the sales app."""
+from http.client import OK, NOT_FOUND
 
 import pandas as pd
 
@@ -27,7 +28,7 @@ router = APIRouter()
     ),
     response_description="A dictionary where keys are column names and values are ColumnStatistics.",
     responses={
-        200: {
+        OK: {
             "description": "Successfully computed statistics.",
             "content": {
                 "application/json": {
@@ -52,7 +53,23 @@ router = APIRouter()
                 }
             },
         },
-        404: {"description": "No statistics found for the given filters and columns."},
+        NOT_FOUND: {
+            "description": "No statistics found for the given filters and columns.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": [
+                            {
+                                "loc": ["body", "filters", "date_range"],
+                                "msg": "No statistics found for the given filters and columns.",
+                                "type": "not_found",
+                                "ctx": {},
+                            }
+                        ]
+                    }
+                }
+            },
+        },
     },
 )
 async def generate_sales_summary_router(
