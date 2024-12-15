@@ -1,6 +1,6 @@
 """Tests for WebServices."""
 
-from http.client import OK, NOT_FOUND
+from http.client import OK
 from pathlib import Path
 
 import pytest
@@ -117,22 +117,6 @@ def test_generate_sales_summary_with_category_filter(
 
     price_stats = response_data["price_per_unit"]
     assert price_stats["median"] == expected_price_median
-
-
-def test_generate_sales_summary_no_matching_filters(client: TestClient) -> None:
-    """Test the /summary endpoint when filters match no rows."""
-
-    filters = Filters(category=["NonExistentCategory"])  # type: ignore[call-arg]
-    payload = SummaryRequest(filters=filters).model_dump()
-    response = client.post("/summary", json=payload)
-
-    assert response.status_code == NOT_FOUND
-    response_data = response.json()
-
-    # no matching rows, so no statistics
-    assert response_data == {
-        "detail": "No statistics found for the given filters and columns."
-    }
 
 
 def test_generate_sales_summary_custom_columns(client: TestClient) -> None:

@@ -9,8 +9,8 @@ from src.apps.sales.dto import (
     SummaryRequest,
     ColumnStatistics,
 )
-from src.apps.sales.services import load_data, filter_data, compute_statistics
-
+from src.apps.sales.services import filter_data, compute_statistics
+from src.apps.sales.data_utils import load_data
 
 __all__ = ("router",)
 router = APIRouter()

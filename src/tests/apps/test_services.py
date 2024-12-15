@@ -6,7 +6,8 @@ import pandas as pd
 import pytest
 
 from src.apps.sales.dto import Filters, DateRange
-from src.apps.sales.services import load_data, filter_data, compute_statistics
+from src.apps.sales.services import filter_data, compute_statistics
+from src.apps.sales.data_utils import load_data, valid_categories
 from src.core.settings import settings
 from src.tests.const import Some
 
@@ -281,3 +282,44 @@ def test_compute_statistics_nan_values() -> None:
     assert result["quantity_sold"]["mode"] == expected_mode
     assert result["quantity_sold"]["percentile_25"] == expected_percentile_25
     assert result["quantity_sold"]["percentile_75"] == expected_percentile_75
+
+
+def test_valid_categories_happy_path(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that valid_categories returns unique categories from the data."""
+
+    mock_data = pd.DataFrame(
+        {
+            "category": [
+                "Electronics",
+                "Books",
+                "Electronics",
+                "Clothing",
+                "Books",
+            ]
+        }
+    )
+
+    def mock_load_data() -> pd.DataFrame:
+        return mock_data
+
+    monkeypatch.setattr("src.apps.sales.data_utils.load_data", mock_load_data)
+    categories = valid_categories()
+
+    assert isinstance(categories, list)
+    assert sorted(categories) == ["Books", "Clothing", "Electronics"]
+
+
+def test_valid_categories_no_categories(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that valid_categories returns an empty list if there are no categories."""
+
+    mock_data = pd.DataFrame(columns=["category"])
+
+    def mock_load_data() -> pd.DataFrame:
+        return mock_data
+
+    monkeypatch.setattr("src.apps.sales.data_utils.load_data", mock_load_data)
+    categories = valid_categories()
+
+    assert categories == []

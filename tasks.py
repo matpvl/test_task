@@ -2,6 +2,7 @@
 
 Not to be confused with the project1337.tasks which holds the Celery tasks.
 """
+
 import os
 import subprocess
 
@@ -13,6 +14,7 @@ from re import IGNORECASE
 
 
 MAIN_SRC_DIR = "src"
+
 
 @task
 def ruff(c):
@@ -124,9 +126,7 @@ def todo(_c, name: str):
     for root, _, files in os.walk(MAIN_SRC_DIR):
         for filename in files:
             if filename.endswith(".py"):
-                with open(
-                    os.path.join(root, filename), "r", encoding="utf-8"
-                ) as file:
+                with open(os.path.join(root, filename), "r", encoding="utf-8") as file:
                     content = file.read()
                     matches = pattern.finditer(content)
                     for match in matches:
@@ -139,8 +139,6 @@ def todo(_c, name: str):
                         print(line_text)
                         comments_found += 1
 
-    print(
-        f"Found {comments_found} 'TODO's mentioning {name} in the project files."
-    )
+    print(f"Found {comments_found} 'TODO's mentioning {name} in the project files.")
 
     sys.stdout.flush()

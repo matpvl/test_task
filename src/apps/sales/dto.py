@@ -5,6 +5,7 @@ from typing import Optional
 
 from pydantic import model_validator, Field
 
+from src.apps.sales.data_utils import valid_categories
 from src.core.common_types import BaseDTO
 
 
@@ -92,6 +93,30 @@ class SummaryRequest(BaseDTO):
                 },
             }
         }
+
+    @model_validator(mode="after")
+    def validate_category(self) -> "SummaryRequest":
+        """Validate the given category filter."""
+
+        # if no filters are provided skip the validation
+        if not (self.filters and self.filters.category):
+            return self
+
+        # check for possible invalid categories
+        valid_categories_list = valid_categories()
+        invalid_categories = [
+            category
+            for category in self.filters.category
+            if category not in valid_categories_list
+        ]
+
+        if invalid_categories:
+            error_msg = (
+                f"Provided categories: {invalid_categories} are not valid."
+            )
+            raise ValueError(error_msg)
+
+        return self
 
 
 class ColumnStatistics(BaseDTO):
