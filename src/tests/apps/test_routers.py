@@ -36,7 +36,7 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> TestClient:
 def test_generate_sales_summary_no_filters(client: TestClient) -> None:
     """Test the /summary endpoint with default columns and no filters."""
 
-    payload = SummaryRequest().model_dump()
+    payload = SummaryRequest().model_dump()  # type: ignore[call-arg]
     response = client.post("/summary", json=payload)
 
     assert response.status_code == OK
@@ -77,7 +77,7 @@ def test_generate_sales_summary_no_filters(client: TestClient) -> None:
 def test_generate_sales_summary_with_date_filter(client: TestClient) -> None:
     """Test date filter works accordingly."""
 
-    filters = Filters(date_range=Some.DATE_RANGE)
+    filters = Filters(date_range=Some.DATE_RANGE)  # type: ignore[call-arg]
     payload = SummaryRequest(filters=filters).model_dump(mode="json")
     response = client.post("/summary", json=payload)
 
@@ -102,7 +102,7 @@ def test_generate_sales_summary_with_category_filter(
 ) -> None:
     """Test filtering via electronics row."""
 
-    filters = Filters(category=["Electronics"])
+    filters = Filters(category=["Electronics"])  # type: ignore[call-arg]
     payload = SummaryRequest(filters=filters).model_dump()
     response = client.post("/summary", json=payload)
 
@@ -122,7 +122,7 @@ def test_generate_sales_summary_with_category_filter(
 def test_generate_sales_summary_no_matching_filters(client: TestClient) -> None:
     """Test the /summary endpoint when filters match no rows."""
 
-    filters = Filters(category=["NonExistentCategory"])
+    filters = Filters(category=["NonExistentCategory"])  # type: ignore[call-arg]
     payload = SummaryRequest(filters=filters).model_dump()
     response = client.post("/summary", json=payload)
 
@@ -138,7 +138,7 @@ def test_generate_sales_summary_no_matching_filters(client: TestClient) -> None:
 def test_generate_sales_summary_custom_columns(client: TestClient) -> None:
     """Test the summary endpoint requesting only one column: quantity_sold."""
 
-    payload = SummaryRequest(columns=["quantity_sold"]).model_dump()
+    payload = SummaryRequest(columns=["quantity_sold"]).model_dump()  # type: ignore[call-arg]
     response = client.post("/summary", json=payload)
 
     assert response.status_code == OK

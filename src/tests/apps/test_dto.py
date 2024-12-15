@@ -44,7 +44,7 @@ def test_filters_valid() -> None:
 
 def test_filters_optional_fields() -> None:
     """Test Filters DTO's fields are optional."""
-    filters = Filters()
+    filters = Filters()  # type: ignore[call-arg]
     assert filters.date_range is None
     assert filters.category is None
     assert filters.product_ids is None
@@ -71,7 +71,7 @@ def test_summary_request_valid() -> None:
 
 def test_summary_request_defaults() -> None:
     """Test SummaryRequest DTO with default values."""
-    request = SummaryRequest()
+    request = SummaryRequest()  # type: ignore[call-arg]
     assert request.columns == ["quantity_sold", "price_per_unit"]
     assert request.filters is None
 
@@ -79,7 +79,7 @@ def test_summary_request_defaults() -> None:
 def test_summary_request_invalid_columns() -> None:
     """Test SummaryRequest DTO with invalid type for columns."""
     with pytest.raises(ValidationError):
-        SummaryRequest(columns=123)  # type: ignore[arg-type]
+        SummaryRequest(columns=123)  # type: ignore[arg-type, call-arg]
 
 
 def test_column_statistics_valid() -> None:

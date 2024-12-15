@@ -111,7 +111,7 @@ def test_filter_data_no_filters(mock_data: pd.DataFrame) -> None:
 def test_filter_data_date_range(mock_data: pd.DataFrame) -> None:
     """Test filter_data with a date range filter."""
 
-    filters = Filters(
+    filters = Filters(  # type: ignore[call-arg]
         date_range=DateRange(
             start_date=Some.START_DATE, end_date=Some.END_DATE_2
         )
@@ -126,7 +126,7 @@ def test_filter_data_date_range(mock_data: pd.DataFrame) -> None:
 def test_filter_data_future_end_date(mock_data: pd.DataFrame) -> None:
     """Test filter_data with a future end date returns all dates smaller than it."""
 
-    filters = Filters(
+    filters = Filters(  # type: ignore[call-arg]
         date_range=DateRange(
             start_date=Some.START_DATE, end_date=Some.FUTURE_DATE
         )
@@ -140,7 +140,7 @@ def test_filter_data_future_end_date(mock_data: pd.DataFrame) -> None:
 def test_filter_data_category(mock_data: pd.DataFrame) -> None:
     """Test filter_data with a category filter."""
 
-    filters = Filters(category=[Some.CATEGORY])
+    filters = Filters(category=[Some.CATEGORY])  # type: ignore[call-arg]
     filtered_data = filter_data(mock_data, filters)
 
     expected_data_len = 2
@@ -151,7 +151,7 @@ def test_filter_data_category(mock_data: pd.DataFrame) -> None:
 def test_filter_data_product_ids(mock_data: pd.DataFrame) -> None:
     """Test filter_data with a product IDs filter."""
 
-    filters = Filters(product_ids=[1001, 1004])
+    filters = Filters(product_ids=[1001, 1004])  # type: ignore[call-arg]
     filtered_data = filter_data(mock_data, filters)
 
     expected_data_len = 2
@@ -177,7 +177,7 @@ def test_filter_data_no_matching_rows(mock_data: pd.DataFrame) -> None:
 def test_filter_data_invalid_field(mock_data: pd.DataFrame) -> None:
     """Test filter_data with an empty filter returns original data."""
 
-    filters = Filters()
+    filters = Filters()  # type: ignore[call-arg]
     filtered_data = filter_data(mock_data, filters)
     pd.testing.assert_frame_equal(filtered_data, mock_data)
 
@@ -194,7 +194,7 @@ def test_filter_data_empty_dataframe() -> None:
             "price_per_unit",
         ]
     )
-    filters = Filters(
+    filters = Filters(  # type: ignore[call-arg]
         category=["Electronics"],
     )
     filtered_data = filter_data(empty_data, filters)

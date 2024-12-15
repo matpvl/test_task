@@ -21,10 +21,41 @@ router = APIRouter()
     response_model=dict[str, ColumnStatistics],
     summary="Generate sales summary",
     description=(
-        "This endpoint generates a summary of sales data based on the provided filters and columns. "
-        "The response includes statistics such as mean, median, mode, standard deviation, and percentiles."
+        "Generates a summary of sales data based on the provided filters and columns. "
+        "The response includes statistics like mean, median, mode, standard deviation, "
+        "and percentiles."
     ),
-    response_description="Sales summary statistics per column.",
+    response_description="A dictionary where keys are column names and values are ColumnStatistics.",
+    responses={
+        200: {
+            "description": "Successfully computed statistics.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "quantity_sold": {
+                            "mean": 125.5,
+                            "median": 120.0,
+                            "mode": 115.0,
+                            "std_dev": 10.0,
+                            "percentile_25": 110.0,
+                            "percentile_75": 130.0,
+                        },
+                        "price_per_unit": {
+                            "mean": 19.99,
+                            "median": 19.5,
+                            "mode": 19.0,
+                            "std_dev": 1.5,
+                            "percentile_25": 18.5,
+                            "percentile_75": 21.0,
+                        },
+                    }
+                }
+            },
+        },
+        404: {
+            "description": "No statistics found for the given filters and columns."
+        },
+    },
 )
 async def generate_sales_summary_router(
     summary_request: SummaryRequest,
