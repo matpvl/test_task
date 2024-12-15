@@ -1,6 +1,6 @@
 """Tests for WebServices."""
 
-from http.client import OK
+from http.client import OK, UNPROCESSABLE_ENTITY
 from pathlib import Path
 
 import pytest
@@ -133,10 +133,7 @@ def test_generate_sales_summary_custom_columns(client: TestClient) -> None:
     assert "price_per_unit" not in response_data
 
     expected_number_of_statistics_fields = 6
-    assert (
-        len(response_data["quantity_sold"])
-        == expected_number_of_statistics_fields
-    )
+    assert len(response_data["quantity_sold"]) == expected_number_of_statistics_fields
 
 
 def test_invalid_category_filter(client: TestClient) -> None:  # noqa: ARG001
@@ -148,3 +145,51 @@ def test_invalid_category_filter(client: TestClient) -> None:  # noqa: ARG001
         match=r"Provided categories: \['InvalidCategory'\] are not valid",
     ):
         SummaryRequest(filters=filters).model_dump(mode="json")
+
+
+def test_generate_sales_summary_with_filters_none(client: TestClient) -> None:
+    """Test date filter works accordingly."""
+
+    json = {
+        "columns": ["quantity_sold", "price_per_unit"],
+        "filters": None,
+    }
+
+    response = client.post("/summary", json=json)
+
+    assert response.status_code == OK
+    response_data = response.json()
+
+    expected_quantity_mean = 25
+    expected_price_mean = 20
+
+    assert "quantity_sold" in response_data
+    assert "price_per_unit" in response_data
+
+    quantity_stats = response_data["quantity_sold"]
+    assert quantity_stats["mean"] == expected_quantity_mean
+
+    price_stats = response_data["price_per_unit"]
+    assert price_stats["mean"] == expected_price_mean
+
+
+def test_generate_sales_summary_with_invalid_date_range(client: TestClient) -> None:
+    """Test date filter returns bad request."""
+
+    json = {
+        "columns": ["quantity_sold", "price_per_unit"],
+        "filters": {
+            "date_range": {
+                "start_date": "2023-01-01",
+                "end_date": "2021-01-01",
+            },
+        },
+    }
+
+    response = client.post("/summary", json=json)
+
+    assert response.status_code == UNPROCESSABLE_ENTITY
+    assert (
+        "end_date must be greater than start_date"
+        in response.json()["detail"][0]["msg"]
+    )
