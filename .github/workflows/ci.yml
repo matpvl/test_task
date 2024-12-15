@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      # Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      # Install Poetry
+      - name: Install Poetry
+        run: pip install poetry==1.6.1
+
+      # Install dependencies
+      - name: Install dependencies
+        run: poetry install
+
+      # Run invoke build-local
+      # This should run tests and linters as defined in tasks.py
+      - name: Invoke build-local
+        run: poetry run invoke build-local
