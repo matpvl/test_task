@@ -1,4 +1,5 @@
 """Contains the routes and url for the sales app."""
+
 from http.client import OK, NOT_FOUND
 
 import pandas as pd
@@ -82,7 +83,9 @@ async def generate_sales_summary_router(
     filtered_data = filter_data(sales_data, summary_request.filters)
 
     # compute statistics for the specified columns
-    statistics = compute_statistics(filtered_data, summary_request.columns or [])
+    statistics = compute_statistics(
+        filtered_data, summary_request.columns or []
+    )
 
     if statistics:
         # convert the statistics dict into ColumnStatistics DTOs

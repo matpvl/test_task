@@ -133,7 +133,10 @@ def test_generate_sales_summary_custom_columns(client: TestClient) -> None:
     assert "price_per_unit" not in response_data
 
     expected_number_of_statistics_fields = 6
-    assert len(response_data["quantity_sold"]) == expected_number_of_statistics_fields
+    assert (
+        len(response_data["quantity_sold"])
+        == expected_number_of_statistics_fields
+    )
 
 
 def test_invalid_category_filter(client: TestClient) -> None:  # noqa: ARG001
@@ -173,7 +176,9 @@ def test_generate_sales_summary_with_filters_none(client: TestClient) -> None:
     assert price_stats["mean"] == expected_price_mean
 
 
-def test_generate_sales_summary_with_invalid_date_range(client: TestClient) -> None:
+def test_generate_sales_summary_with_invalid_date_range(
+    client: TestClient,
+) -> None:
     """Test date filter returns unprocessable entity error."""
 
     json = {

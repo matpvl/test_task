@@ -3,7 +3,7 @@
 from datetime import date
 from typing import Optional
 
-from pydantic import model_validator, Field
+from pydantic import model_validator, Field, ConfigDict
 
 from src.apps.sales.data_utils import valid_categories
 from src.core.common_types import BaseDTO
@@ -77,10 +77,8 @@ class SummaryRequest(BaseDTO):
         ],
     )
 
-    class Config:
-        """Model configuration."""
-
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "columns": ["quantity_sold", "price_per_unit"],
                 "filters": {
@@ -93,6 +91,7 @@ class SummaryRequest(BaseDTO):
                 },
             }
         }
+    )
 
     @model_validator(mode="after")
     def validate_category(self) -> "SummaryRequest":
@@ -111,7 +110,9 @@ class SummaryRequest(BaseDTO):
         ]
 
         if invalid_categories:
-            error_msg = f"Provided categories: {invalid_categories} are not valid."
+            error_msg = (
+                f"Provided categories: {invalid_categories} are not valid."
+            )
             raise ValueError(error_msg)
 
         return self
@@ -121,7 +122,9 @@ class ColumnStatistics(BaseDTO):
     """DTO for statistics of a single column."""
 
     mean: float = Field(..., description="Mean of the column", examples=[125.5])
-    median: float = Field(..., description="Median of the column", examples=[120.0])
+    median: float = Field(
+        ..., description="Median of the column", examples=[120.0]
+    )
     mode: float = Field(..., description="Mode of the column", examples=[115.0])
     std_dev: float = Field(
         ..., description="Standard deviation of the column", examples=[10.0]
@@ -133,10 +136,8 @@ class ColumnStatistics(BaseDTO):
         ..., description="75th percentile of the column", examples=[130.0]
     )
 
-    class Config:
-        """Model configuration."""
-
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "mean": 125.5,
                 "median": 120.0,
@@ -146,3 +147,4 @@ class ColumnStatistics(BaseDTO):
                 "percentile_75": 130.0,
             }
         }
+    )
